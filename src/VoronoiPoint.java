@@ -36,22 +36,22 @@ public class VoronoiPoint {
 	public List<Pixel> getEdgeList() {
 		int smallestY = 999999999;
 		int biggestY = 0;
-		
+
 		int smallestX = 999999999;
 		int biggestX = 0;
 
-		// get the extreme value 
+		// get the extreme value
 		for (Pixel p : pixelCollection) {
-			
-			//get extreme Y value
+
+			// get extreme Y value
 			if (p.getY() < smallestY) {
 				smallestY = p.getY();
 			}
 			if (p.getY() > biggestY) {
 				biggestY = p.getY();
 			}
-			
-			//get extreme X value
+
+			// get extreme X value
 			if (p.getX() < smallestX) {
 				smallestX = p.getX();
 			}
@@ -60,7 +60,7 @@ public class VoronoiPoint {
 			}
 		}
 
-		//get the horizontal border
+		// get the horizontal border
 		for (int i = smallestY; i <= biggestY; i++) {
 
 			int smallX = 999999999;
@@ -76,14 +76,14 @@ public class VoronoiPoint {
 
 				} // end if
 			} // end for
-			
+
+			// add the pixel of border to edge list
 			edgeCollection.add(new Pixel(smallX, i));
 			if (bigX != smallX)
 				edgeCollection.add(new Pixel(bigX, i));
 		} // end for
-		
-		
-		//get the vertical border
+
+		// get the vertical border
 		for (int i = smallestX; i <= biggestX; i++) {
 
 			int smallY = 999999999;
@@ -99,15 +99,17 @@ public class VoronoiPoint {
 
 				} // end if
 			} // end for
-			
-			edgeCollection.add(new Pixel(i,smallY));
+
+			// add the pixel of border to edge list
+			edgeCollection.add(new Pixel(i, smallY));
 			if (bigY != smallY)
-				edgeCollection.add(new Pixel(i,bigY));
+				edgeCollection.add(new Pixel(i, bigY));
 		} // end for
 
 		return edgeCollection;
 	}
 
+	// add pixel to the pixel list and add the rgb value to total
 	public void AddPixel(int x, int y, int rgb) {
 		blueTotal += new Color(rgb).getBlue();
 		greenTotal += new Color(rgb).getGreen();

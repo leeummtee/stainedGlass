@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.File;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -49,9 +50,22 @@ public class StainedGlass extends Frame{
 
 
 
-		public BufferedImage colorCorrect(BufferedImage src, BufferedImage bg) {
+		public BufferedImage StainedGlassFilter(BufferedImage src, int blockSize, double blockFactor, 
+				int distanceType, boolean highlightEdges,  
+                byte edgeThreshold, Color edgeColor) {
+			
 			BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
 
+			int neighbourHoodTotal = 0; 
+		    int sourceOffset = 0; 
+		    int resultOffset = 0; 
+		    int currentPixelDistance = 0; 
+		    int nearestPixelDistance = 0; 
+		    int nearesttPointIndex = 0; 
+		    
+		    Random randomizer = new Random(); 
+
+			/*
 			for (int x = 0; x < src.getWidth(); x++) {
 				for (int y = 0; y < src.getHeight(); y++) {
 					int bg_rgb = bg.getRGB(x, y);
@@ -63,7 +77,10 @@ public class StainedGlass extends Frame{
 
 					result.setRGB(x, y, new Color(corrected).getRGB());
 				}
-			}
+			}*/
+		    
+		    
+		    
 
 			return result;
 		}
@@ -88,7 +105,7 @@ public class StainedGlass extends Frame{
 		}
 
 		public void paint(Graphics g) {
-			int w = width / 2; // door image
+			int w = width / 2; 
 			int h = height / 2;
 
 

@@ -5,24 +5,18 @@ import java.util.List;
 public class VoronoiPoint 
 	{
 		
-	    private int xOffset = 0;
-	    private int yOffset = 0;
-
 	    private int blueTotal = 0; 
 	    private int greenTotal = 0; 
 	    private int redTotal = 0; 
 	    
 	    private int blueAverage = 0; 
 	    private int greenAverage = 0; 
-	    private int redAverage = 0; 
+	    private int redAverage = 0;
 	    
-	    public VoronoiPoint(int x, int y) {
-	    	this.xOffset = x;
-	    	this.yOffset = y;
-	    }
+	    private List<Pixel> pixelCollection = new ArrayList<Pixel>(); 
 	    
 
-	    public void CalculateAverages() 
+	    private void CalculateAverages() 
 	    {
 	        if (pixelCollection.size() > 0) 
 	        {
@@ -31,16 +25,25 @@ public class VoronoiPoint
 	            redAverage = redTotal / pixelCollection.size(); 
 	        }
 	    }
+	    
+	    public int getColor() {
+	    	this.CalculateAverages();
+			return new Color(redAverage, greenAverage, blueAverage).getRGB();
+	    }
+	    
+	    public List<Pixel> getPixelList(){
+	    	return pixelCollection;
+	    }
 
 
-	    private List<Pixel> pixelCollection = new ArrayList<Pixel>(); 
-
-
-	    public void AddPixel(Pixel pixel) 
+	    public void AddPixel(int x, int y, int rgb) 
 	    { 
-	        blueTotal += new Color(pixel.getColor()).getBlue(); 
-	        greenTotal += new Color(pixel.getColor()).getGreen();  
-	        redTotal += new Color(pixel.getColor()).getRed();  
+	        blueTotal += new Color(rgb).getBlue(); 
+	        greenTotal += new Color(rgb).getGreen();  
+	        redTotal += new Color(rgb).getRed();
+	        
+	        Pixel p = new Pixel(x,y);
+	        pixelCollection.add(p);
 
 	    } 
 	    

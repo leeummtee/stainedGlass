@@ -24,7 +24,7 @@ public class StainedGlass extends Frame {
 	int width, height;
 
 	static BufferedImage I;
-	static int px[], py[], color[], cells = 1530;
+	static int px[], py[], color[], cells = 1000;
 
 	// constructor
 	// Get an image from the specified file in the current directory on the
@@ -112,7 +112,7 @@ public class StainedGlass extends Frame {
 
 			for (int j = 0; j < edgeCollection.size(); j++) {
 				Pixel temp = edgeCollection.get(j); // get the pixel data
-				result.setRGB(temp.getX(), temp.getY(), Color.black.getRGB()); // set the pixel data to result image
+				result.setRGB(temp.getX(), temp.getY(), Color.white.getRGB()); // set the pixel data to result image
 			} // end for
 			
 

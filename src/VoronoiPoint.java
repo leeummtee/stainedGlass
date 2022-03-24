@@ -34,20 +34,34 @@ public class VoronoiPoint {
 	}
 
 	public List<Pixel> getEdgeList() {
-		int smallY = 999999999;
-		int bigY = 0;
+		int smallestY = 999999999;
+		int biggestY = 0;
+		
+		int smallestX = 999999999;
+		int biggestX = 0;
 
-		// get the extreme value of y
+		// get the extreme value 
 		for (Pixel p : pixelCollection) {
-			if (p.getY() < smallY) {
-				smallY = p.getY();
+			
+			//get extreme Y value
+			if (p.getY() < smallestY) {
+				smallestY = p.getY();
 			}
-			if (p.getY() > bigY) {
-				bigY = p.getY();
+			if (p.getY() > biggestY) {
+				biggestY = p.getY();
+			}
+			
+			//get extreme X value
+			if (p.getX() < smallestX) {
+				smallestX = p.getX();
+			}
+			if (p.getX() > biggestX) {
+				biggestX = p.getX();
 			}
 		}
 
-		for (int i = smallY; i <= bigY; i++) {
+		//get the horizontal border
+		for (int i = smallestY; i <= biggestY; i++) {
 
 			int smallX = 999999999;
 			int bigX = 0;
@@ -66,6 +80,29 @@ public class VoronoiPoint {
 			edgeCollection.add(new Pixel(smallX, i));
 			if (bigX != smallX)
 				edgeCollection.add(new Pixel(bigX, i));
+		} // end for
+		
+		
+		//get the vertical border
+		for (int i = smallestX; i <= biggestX; i++) {
+
+			int smallY = 999999999;
+			int bigY = 0;
+			for (Pixel p : pixelCollection) {
+				if (p.getX() == i) {
+					if (p.getY() < smallY) {
+						smallY = p.getY();
+					} // end if
+					if (p.getY() > bigY) {
+						bigY = p.getY();
+					} // end if
+
+				} // end if
+			} // end for
+			
+			edgeCollection.add(new Pixel(i,smallY));
+			if (bigY != smallY)
+				edgeCollection.add(new Pixel(i,bigY));
 		} // end for
 
 		return edgeCollection;

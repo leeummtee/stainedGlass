@@ -54,58 +54,66 @@ public class StainedGlass extends Frame {
 	}// end constructor
 
 	public BufferedImage stainedGlassFilter(BufferedImage src) {
+
 		BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
 
 		int n = 0;
+
 		Random rand = new Random();
-		// I = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
 		px = new int[cells];
 		py = new int[cells];
 		color = new int[cells];
+
 		List<VoronoiPoint> voronoiPointList = new ArrayList<VoronoiPoint>();
 
 		// initiate Lists
 		for (int i = 0; i < cells; i++) {
 			px[i] = rand.nextInt(width);
 			py[i] = rand.nextInt(height);
-
 			voronoiPointList.add(new VoronoiPoint());
 		}
 
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+		// Categorize each of pixel depending on the Voronoi Area they belongs to
+		for (int x = 0; x < width; x++) { // for each column in the image boundary
+			for (int y = 0; y < height; y++) { // for each row in the image boundary
 				n = 0;
-				for (int i = 0; i < cells; i++) {
-					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) {
+				for (int i = 0; i < cells; i++) { // for each of cell point
+					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) { // see if the pixel in the cell area
 						n = i;
 					}
 				}
-				voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y));
-				// result.setRGB(x, y, color[n]);
+				voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond collection
 			}
 		}
+		//end of adding pixel
 		
-		for (int i=0; i < voronoiPointList.size(); i++) {
-			
-			VoronoiPoint tempVoronoi = voronoiPointList.get(i);
-			List<Pixel> pixelCollection = tempVoronoi.getPixelList();
-			
-			int rgbValue = tempVoronoi.getColor();
-					
-			for(int j = 0; j < pixelCollection.size();j++) {
-				Pixel temp = pixelCollection.get(j);
-				result.setRGB(temp.getX(), temp.getY(), rgbValue);
+		
+		//Apply the color of each of pixel from collection to the result image
+		for (int i = 0; i < voronoiPointList.size(); i++) {
+
+			VoronoiPoint tempVoronoi = voronoiPointList.get(i); 
+			List<Pixel> pixelCollection = tempVoronoi.getPixelList(); //get the pixel collection of one cell
+
+			int rgbValue = tempVoronoi.getColor(); //get the average color value in the area
+
+			for (int j = 0; j < pixelCollection.size(); j++) {
+				Pixel temp = pixelCollection.get(j);  //get the pixel data
+				result.setRGB(temp.getX(), temp.getY(), rgbValue); //set the pixel data to result image
 			}
 
 		}
+		
+		//end of applying
 
 		// Graphics2D g = I.createGraphics();
 
 		return result;
 	}
 
-	// Until functions ========
-
+	
+	// Until functions ======== //
+	
 	private double distance(int x1, int x2, int y1, int y2) {
 		double d;
 		d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)); // Euclidian
@@ -133,7 +141,7 @@ public class StainedGlass extends Frame {
 		return pixel & 0xFF;
 	}
 
-	// display=================
+	// display================================== //
 
 	public void paint(Graphics g) {
 		int w = width / 2;

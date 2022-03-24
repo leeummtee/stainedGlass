@@ -79,41 +79,54 @@ public class StainedGlass extends Frame {
 			for (int y = 0; y < height; y++) { // for each row in the image boundary
 				n = 0;
 				for (int i = 0; i < cells; i++) { // for each of cell point
-					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) { // see if the pixel in the cell area
+					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) { // see if the pixel in the cell
+																						// area
 						n = i;
 					}
 				}
-				voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond collection
+				/*
+				 * for (int i = 0; i < cells; i++) { if (n != i && distance(px[n], x, py[n], y)
+				 * == distance(px[i], x-1, py[i], y)) { edgePointList.add(new Pixel(x, y));
+				 * break; } }
+				 */
+				voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond
+																			// collection
 			}
 		}
-		//end of adding pixel
-		
-		
-		//Apply the color of each of pixel from collection to the result image
+
+		// end of adding pixel
+
+		// Apply the color of each of pixel from collection to the result image
 		for (int i = 0; i < voronoiPointList.size(); i++) {
 
-			VoronoiPoint tempVoronoi = voronoiPointList.get(i); 
-			List<Pixel> pixelCollection = tempVoronoi.getPixelList(); //get the pixel collection of one cell
+			VoronoiPoint tempVoronoi = voronoiPointList.get(i);
+			List<Pixel> pixelCollection = tempVoronoi.getPixelList(); // get the pixel collection of one cell
+			List<Pixel> edgeCollection = tempVoronoi.getEdgeList(); // get the pixel collection of one cell
 
-			int rgbValue = tempVoronoi.getColor(); //get the average color value in the area
+			int rgbValue = tempVoronoi.getColor(); // get the average color value in the area
 
 			for (int j = 0; j < pixelCollection.size(); j++) {
-				Pixel temp = pixelCollection.get(j);  //get the pixel data
-				result.setRGB(temp.getX(), temp.getY(), rgbValue); //set the pixel data to result image
-			}
+				Pixel temp = pixelCollection.get(j); // get the pixel data
+				result.setRGB(temp.getX(), temp.getY(), rgbValue); // set the pixel data to result image
+			} // end for
 
-		}
-		
-		//end of applying
+			for (int j = 0; j < edgeCollection.size(); j++) {
+				Pixel temp = edgeCollection.get(j); // get the pixel data
+				result.setRGB(temp.getX(), temp.getY(), Color.black.getRGB()); // set the pixel data to result image
+			} // end for
+			
+
+		} // end for
+
+		// end of applying
 
 		// Graphics2D g = I.createGraphics();
 
 		return result;
 	}
 
-	
 	// Until functions ======== //
-	
+
 	private double distance(int x1, int x2, int y1, int y2) {
 		double d;
 		d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)); // Euclidian

@@ -44,7 +44,14 @@ public class StainedGlass extends Frame {
 		height = srcImg.getHeight();
 
 		// finalResult = stainedGlassFilter(srcImg); // apply the filter to the image
-		finalResult = applyQuadtree(srcImg); // apply the filter to the image
+		try {
+			finalResult = applyQuadtree(srcImg);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} // apply the filter to the image
+		
+		
 
 		// Anonymous inner-class listener to terminate program
 		this.addWindowListener(new WindowAdapter() {// anonymous class definition
@@ -122,14 +129,13 @@ public class StainedGlass extends Frame {
 		return result;
 	}
 
-	public BufferedImage applyQuadtree(BufferedImage image) {
+	public BufferedImage applyQuadtree(BufferedImage image) throws IOException {
 
 		BufferedImage result = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType());
 		Color[][] colors = makeColorArray(image);
 
-		int width = image.getWidth();
-		int height = image.getHeight();
-		int threshHold = 120;
+
+		int threshHold = 20;
 		QuadTree<Color> quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
 
 		for (int i = 0; i < width; i++) {
@@ -137,16 +143,16 @@ public class StainedGlass extends Frame {
 				result.setRGB(i, j, quadTree.get(i, j).getRGB());
 			}
 		}
-
+		ImageIO.write(result, "png", new File("normal_quad" + threshHold + ".png"));
 		return result;
+		
+			
 	}
 
 	// Until functions ======== //
 
 	private Color[][] makeColorArray(BufferedImage image) {
 
-		int width = image.getWidth();
-		int height = image.getHeight();
 
 		Color colors[][] = new Color[width][height];
 
@@ -168,27 +174,11 @@ public class StainedGlass extends Frame {
 		return d;
 	}
 
-	private int clip(int v) {
-		v = v > 255 ? 255 : v;
-		v = v < 0 ? 0 : v;
-		return v;
-	}
-
-	protected int getRed(int pixel) {
-		return (pixel >>> 16) & 0xFF;
-	}
-
-	protected int getGreen(int pixel) {
-		return (pixel >>> 8) & 0xFF;
-	}
-
-	protected int getBlue(int pixel) {
-		return pixel & 0xFF;
-	}
 
 	// display================================== //
 
 	public void paint(Graphics g) {
+	 
 		int w = width/4 ;
 		int h = height/4 ;
 
@@ -199,10 +189,10 @@ public class StainedGlass extends Frame {
 		g.setFont(f1);
 
 		g.drawImage(srcImg, 20, 50, w, h, this);
-		g.drawString("Before", 20, 50 + h + 30);
+		g.drawString("Before", 20, 50 + h + 20);
 
 		g.drawImage(finalResult, 50 + w, 50, w, h, this);
-		g.drawString("After", 50 + w, 50 + h + 30);
+		g.drawString("After", 50 + w, 50 + h + 20);
 
 	}
 	// =======================================================//

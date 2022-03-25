@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,7 +32,7 @@ public class StainedGlass extends Frame {
 	// local hard disk.
 	public StainedGlass() {
 		try {
-			srcImg = ImageIO.read(new File("test.jpg"));
+			srcImg = ImageIO.read(new File("test2.jpg"));
 
 		} catch (Exception e) {
 			System.out.println("Cannot load the provided image");
@@ -42,7 +43,8 @@ public class StainedGlass extends Frame {
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
 
-		finalResult = stainedGlassFilter(srcImg);
+		// finalResult = stainedGlassFilter(srcImg); // apply the filter to the image
+		finalResult = applyQuadtree(srcImg); // apply the filter to the image
 
 		// Anonymous inner-class listener to terminate program
 		this.addWindowListener(new WindowAdapter() {// anonymous class definition
@@ -79,16 +81,12 @@ public class StainedGlass extends Frame {
 			for (int y = 0; y < height; y++) { // for each row in the image boundary
 				n = 0;
 				for (int i = 0; i < cells; i++) { // for each of cell point
-					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) { // see if the pixel in the cell
-																						// area
+					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) { // find the nearest cell center
+
 						n = i;
 					}
 				}
-				/*
-				 * for (int i = 0; i < cells; i++) { if (n != i && distance(px[n], x, py[n], y)
-				 * == distance(px[i], x-1, py[i], y)) { edgePointList.add(new Pixel(x, y));
-				 * break; } }
-				 */
+
 				voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond
 																			// collection
 			}
@@ -114,7 +112,6 @@ public class StainedGlass extends Frame {
 				Pixel temp = edgeCollection.get(j); // get the pixel data
 				result.setRGB(temp.getX(), temp.getY(), Color.white.getRGB()); // set the pixel data to result image
 			} // end for
-			
 
 		} // end for
 
@@ -125,7 +122,42 @@ public class StainedGlass extends Frame {
 		return result;
 	}
 
+	public BufferedImage applyQuadtree(BufferedImage image) {
+
+		BufferedImage result = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType());
+		Color[][] colors = makeColorArray(image);
+
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int threshHold = 9;
+		QuadTree<Color> quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				result.setRGB(i, j, quadTree.get(i, j).getRGB());
+			}
+		}
+
+		return result;
+	}
+
 	// Until functions ======== //
+
+	private Color[][] makeColorArray(BufferedImage image) {
+
+		int width = image.getWidth();
+		int height = image.getHeight();
+
+		Color colors[][] = new Color[width][height];
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				colors[i][j] = new Color(image.getRGB(i, j));
+			}
+		}
+
+		return colors;
+	}
 
 	private double distance(int x1, int x2, int y1, int y2) {
 		double d;
@@ -157,8 +189,8 @@ public class StainedGlass extends Frame {
 	// display================================== //
 
 	public void paint(Graphics g) {
-		int w = width / 2;
-		int h = height / 2;
+		int w = width/2 ;
+		int h = height/2 ;
 
 		this.setSize(w * 2 + 100, h * 2 + 50);
 

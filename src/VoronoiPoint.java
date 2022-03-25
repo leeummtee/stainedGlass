@@ -33,6 +33,8 @@ public class VoronoiPoint {
 		return pixelCollection;
 	}
 
+	
+	//get edge list of the pixel collection
 	public List<Pixel> getEdgeList() {
 		int smallestY = 999999999;
 		int biggestY = 0;

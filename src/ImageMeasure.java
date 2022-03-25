@@ -49,13 +49,13 @@ public class ImageMeasure {
 				int green = data[i][j].getGreen();
 				int blue = data[i][j].getBlue();
 
-				redSum += Math.pow(red - redAvg, 2);
-				greenSum += Math.pow(green - greenAvg, 2);
-				blueSum += Math.pow(blue - blueAvg, 2);
+				redSum += Math.abs(red - redAvg);
+				greenSum += Math.abs(green - greenAvg);
+				blueSum += Math.abs(blue - blueAvg);
 			}
 		}
-		return redSum / (pixelCount * 255 * 255) + greenSum / (pixelCount * 255 * 255)
-				+ blueSum / (pixelCount * 255 * 255);
+		return redSum / (pixelCount * 255 ) + greenSum / (pixelCount * 255 )
+				+ blueSum / (pixelCount * 255 );
 	}
 
 }

@@ -29,23 +29,7 @@ public class QuadTree<T>
 		return root.get(i, j);
 	}	
 	
-	/**
-		Counts the number of children.
-	*/
-	public int getChildCount(boolean countDataNodesOnly)
-	{
-		return root.getChildCount(countDataNodesOnly);		
-	}
-	
-	public int getWidth()
-	{
-		return root.width;
-	}
-	
-	public int getHeight()
-	{
-		return root.height;
-	}
+
 	
 	/**
 		A QuadTree node.
@@ -64,11 +48,11 @@ public class QuadTree<T>
 			this.width = width;
 			this.height = height;
 			
-			if((width == 1) || (height == 1) || (measure.measureDetail(data, x, y, width, height) <= threshold))
+			if(  ((width < 45) || (height < 45) || (measure.measureDetail(data, x, y, width, height) < threshold)))
 			{	
 				value = measure.approximate(data, x, y, width, height);
 			}
-			else
+			else 
 			{				
 				children = new Object[4];
 				
@@ -100,7 +84,7 @@ public class QuadTree<T>
 					{
 						return ((Node) children[1]).get(i, j);					
 					}
-					else
+					else 
 					{
 						return ((Node) children[3]).get(i, j);
 					}	
@@ -108,26 +92,12 @@ public class QuadTree<T>
 			}
 			else
 			{				
-				if(((j == y) || (i == x)) && (defaultValue != null))
+				if(((i==x) || (j == y)) && (defaultValue != null))
 					return defaultValue;				
 				else
 					return value;
 			}
 		}
 		
-		public int getChildCount(boolean countDataNodesOnly)
-		{
-			int count = countDataNodesOnly ? 0 : 1; //self
-			
-			if(value == null)
-			{
-				count += ((Node) children[0]).getChildCount(countDataNodesOnly);
-				count += ((Node) children[1]).getChildCount(countDataNodesOnly);
-				count += ((Node) children[2]).getChildCount(countDataNodesOnly);
-				count += ((Node) children[3]).getChildCount(countDataNodesOnly);
-			}
-			
-			return count;
-		}
 	}
 }

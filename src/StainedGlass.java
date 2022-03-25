@@ -32,7 +32,7 @@ public class StainedGlass extends Frame {
 	// local hard disk.
 	public StainedGlass() {
 		try {
-			srcImg = ImageIO.read(new File("test2.jpg"));
+			srcImg = ImageIO.read(new File("test3.jpg"));
 
 		} catch (Exception e) {
 			System.out.println("Cannot load the provided image");
@@ -129,7 +129,7 @@ public class StainedGlass extends Frame {
 
 		int width = image.getWidth();
 		int height = image.getHeight();
-		int threshHold = 9;
+		int threshHold = 120;
 		QuadTree<Color> quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
 
 		for (int i = 0; i < width; i++) {
@@ -189,8 +189,8 @@ public class StainedGlass extends Frame {
 	// display================================== //
 
 	public void paint(Graphics g) {
-		int w = width/2 ;
-		int h = height/2 ;
+		int w = width/4 ;
+		int h = height/4 ;
 
 		this.setSize(w * 2 + 100, h * 2 + 50);
 

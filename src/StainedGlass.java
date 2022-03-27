@@ -26,6 +26,7 @@ public class StainedGlass extends Frame {
 
 	static BufferedImage I;
 	static int px[], py[], color[], cells = 1000;
+	int chooseFilter = 1; //0 is glass, 1 is quadtree
 
 	// constructor
 	// Get an image from the specified file in the current directory on the
@@ -43,15 +44,25 @@ public class StainedGlass extends Frame {
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
 
-		// finalResult = stainedGlassFilter(srcImg); // apply the filter to the image
-		try {
-			finalResult = applyQuadtree(srcImg);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} // apply the filter to the image
-		
-		
+		if (chooseFilter == 0) {
+			try {
+				finalResult = stainedGlassFilter(srcImg);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} // apply the filter to the image
+
+		}
+
+		else if (chooseFilter == 1) {
+			try {
+				finalResult = applyQuadtree(srcImg);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} // apply the filter to the image
+
+		}
 
 		// Anonymous inner-class listener to terminate program
 		this.addWindowListener(new WindowAdapter() {// anonymous class definition
@@ -62,7 +73,7 @@ public class StainedGlass extends Frame {
 		);// end addWindowListener
 	}// end constructor
 
-	public BufferedImage stainedGlassFilter(BufferedImage src) {
+	public BufferedImage stainedGlassFilter(BufferedImage src) throws IOException {
 
 		BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
 
@@ -124,6 +135,8 @@ public class StainedGlass extends Frame {
 
 		// end of applying
 
+		ImageIO.write(result, "png", new File("glasseffect" + ".png"));
+
 		// Graphics2D g = I.createGraphics();
 
 		return result;
@@ -133,7 +146,6 @@ public class StainedGlass extends Frame {
 
 		BufferedImage result = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType());
 		Color[][] colors = makeColorArray(image);
-
 
 		int threshHold = 20;
 		QuadTree<Color> quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
@@ -145,14 +157,12 @@ public class StainedGlass extends Frame {
 		}
 		ImageIO.write(result, "png", new File("normal_quad" + threshHold + ".png"));
 		return result;
-		
-			
+
 	}
 
 	// Until functions ======== //
 
 	private Color[][] makeColorArray(BufferedImage image) {
-
 
 		Color colors[][] = new Color[width][height];
 
@@ -174,13 +184,12 @@ public class StainedGlass extends Frame {
 		return d;
 	}
 
-
 	// display================================== //
 
 	public void paint(Graphics g) {
-	 
-		int w = width/4 ;
-		int h = height/4 ;
+
+		int w = width / 4;
+		int h = height / 4;
 
 		this.setSize(w * 2 + 100, h * 2 + 50);
 

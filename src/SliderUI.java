@@ -26,7 +26,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Slider extends JPanel implements ChangeListener, ActionListener, ItemListener{
+public class SliderUI extends JPanel implements ChangeListener, ActionListener, ItemListener{
     JFrame frame;
     JPanel panel;
 
@@ -52,18 +52,11 @@ public class Slider extends JPanel implements ChangeListener, ActionListener, It
     int lineBlue = 255; // holds the value of the blue channel for the outline colour
 
     //	 Create the UI window
-    public Slider(StainedGlass stainedGlass){
+    public SliderUI(StainedGlass stainedGlass){
         setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
         setLayout(new GridBagLayout());
         this.stainedGlass = stainedGlass;
 
-//	create and set seed slider and label
-//        seedSlider = new JSlider(stainedGlass.minSeeds,stainedGlass.maxSeeds,stainedGlass.numberOfSeeds);
-        seedSlider.setPreferredSize(new Dimension(350,30));
-        seedSlider.setOrientation(SwingConstants.HORIZONTAL);
-        seedSlider.addChangeListener(this);
-        seedLabel.setFont(new Font("Verdana", Font.PLAIN, 13));
-        seedLabel.setText("Detail: "+ seedSlider.getValue());
 // set radio button and labels to select distance calculation to change the shape of voronoi regions
         distanceLabel.setFont(new Font("Verdana", Font.PLAIN, 13));
         distanceLabel.setText("Shape of fragments: ");
@@ -118,25 +111,16 @@ public class Slider extends JPanel implements ChangeListener, ActionListener, It
     public void actionPerformed(ActionEvent event) {
         // change the distance calculation option based on user selection on the UI
         if (distanceMButton.isSelected()) {
-//            stainedGlass.refinement = 1.0d;
-//            System.out.println(stainedGlass.refinement);
         }
         else if (distanceEButton.isSelected()) {
-//            stainedGlass.refinement = 2.0d;
-//            System.out.println(stainedGlass.refinement);
         }
         else if (distanceCButton.isSelected()) {
-//            stainedGlass.refinement = 3.0d;
-//            System.out.println(stainedGlass.refinement);
         }
 
         JButton clickedButton = (JButton) event.getSource();
         // apply the filters and options
         if (clickedButton == renderButton) {
             // Apply the current control values to finalProject
-//            stainedGlass.numberOfSeeds = seedSlider.getValue();
-//            stainedGlass.fragOutlines = fragOutlines.getState();
-//            stainedGlass.refresh()
         }
     }
 

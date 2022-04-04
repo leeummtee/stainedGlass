@@ -34,8 +34,8 @@ public class StainedGlass extends Frame {
 	static int px[], py[], color[], cells = 1000;
 	int chooseFilter = 0; //0 is glass, 1 is quadtree
 	
-	Slider slider;
-
+	SliderUI sliderUI;
+	
 
 	// constructor
 	// Get an image from the specified file in the current directory on the
@@ -54,8 +54,8 @@ public class StainedGlass extends Frame {
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
 		
-        slider = new Slider(this); // Create the UI control window
-        slider.display(); // Show the UI control window
+//        sliderUI= new SliderUI(this); // Create the UI control window
+//        sliderUI.display(); // Show the UI control window
 
 		if (chooseFilter == 0) {
 			try {

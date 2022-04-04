@@ -1,5 +1,3 @@
-
-
 public class Pixel {
 	
 	 private int xOffset = 0; 

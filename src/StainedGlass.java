@@ -6,8 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +17,10 @@ import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import javafx.scene.control.Slider;
 
 public class StainedGlass extends Frame {
 
@@ -26,7 +32,10 @@ public class StainedGlass extends Frame {
 
 	static BufferedImage I;
 	static int px[], py[], color[], cells = 1000;
-	int chooseFilter = 1; //0 is glass, 1 is quadtree
+	int chooseFilter = 0; //0 is glass, 1 is quadtree
+	
+	Slider slider;
+
 
 	// constructor
 	// Get an image from the specified file in the current directory on the
@@ -34,6 +43,7 @@ public class StainedGlass extends Frame {
 	public StainedGlass() {
 		try {
 			srcImg = ImageIO.read(new File("test3.jpg"));
+			loadImage();
 
 		} catch (Exception e) {
 			System.out.println("Cannot load the provided image");
@@ -43,6 +53,9 @@ public class StainedGlass extends Frame {
 
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
+		
+//        slider = new Slider(this); // Create the UI control window
+//        slider.display(); // Show the UI control window
 
 		if (chooseFilter == 0) {
 			try {
@@ -72,6 +85,30 @@ public class StainedGlass extends Frame {
 		}// end WindowAdapter
 		);// end addWindowListener
 	}// end constructor
+	
+    // load image from user file
+    private void loadImage() {
+	   try {
+	           JFileChooser chooser = new JFileChooser();
+	           FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "png");
+	           chooser.setFileFilter(filter);
+	           int returnVal = chooser.showOpenDialog(null);
+	           if (returnVal == JFileChooser.APPROVE_OPTION) {
+	               srcImg = deepCopy(ImageIO.read(chooser.getSelectedFile()));
+	       }
+	       this.setSize(width, height);
+	   } catch (Exception e) {
+	       e.printStackTrace();
+	   }
+	}
+    
+    // creates deep copies of images 
+    static BufferedImage deepCopy(BufferedImage bi) {
+    	   ColorModel cm = bi.getColorModel();
+    	   boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+    	   WritableRaster raster = bi.copyData(null);
+    	   return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+    	}
 
 	public BufferedImage stainedGlassFilter(BufferedImage src) throws IOException {
 

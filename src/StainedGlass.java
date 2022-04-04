@@ -54,8 +54,8 @@ public class StainedGlass extends Frame {
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
 		
-//        slider = new Slider(this); // Create the UI control window
-//        slider.display(); // Show the UI control window
+        slider = new Slider(this); // Create the UI control window
+        slider.display(); // Show the UI control window
 
 		if (chooseFilter == 0) {
 			try {

@@ -4,7 +4,6 @@ public class Pixel {
 	
 	 private int xOffset = 0; 
 	 private int yOffset = 0; 
-	 private int rgb = 0;
 	
 	public Pixel(int x, int y) {
     	this.xOffset = x;

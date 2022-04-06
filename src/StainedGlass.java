@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
@@ -26,7 +27,12 @@ public class StainedGlass extends Frame {
 
 	static BufferedImage I;
 	static int px[], py[], color[], cells = 1000;
-	int chooseFilter = 1; //0 is glass, 1 is quadtree
+	int chooseFilter = 0; // 0 is glass, 1 is quadtree
+	int threshHold = 20;
+	int iteration = 10;
+
+	public Color[][] colors;
+	public QuadTree<Color> quadTree;
 
 	// constructor
 	// Get an image from the specified file in the current directory on the
@@ -43,6 +49,11 @@ public class StainedGlass extends Frame {
 
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
+
+		// Initialize section===========
+		colors = makeColorArray(srcImg);
+		quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
+		// ===================The end ==============
 
 		if (chooseFilter == 0) {
 			try {
@@ -79,45 +90,48 @@ public class StainedGlass extends Frame {
 
 		int n = 0;
 
-		Random rand = new Random();
-
-		px = new int[cells];
-		py = new int[cells];
-		color = new int[cells];
-
 		List<VoronoiPoint> voronoiPointList = new ArrayList<VoronoiPoint>();
+		List<Pixel> centerList = quadTree.centerPointCollection;
 
-		// initiate Lists
-		for (int i = 0; i < cells; i++) {
-			px[i] = rand.nextInt(width);
-			py[i] = rand.nextInt(height);
-			voronoiPointList.add(new VoronoiPoint());
-		}
-
-		// Categorize each of pixel depending on the Voronoi Area they belongs to
-		for (int x = 0; x < width; x++) { // for each column in the image boundary
-			for (int y = 0; y < height; y++) { // for each row in the image boundary
-				n = 0;
-				for (int i = 0; i < cells; i++) { // for each of cell point
-					if (distance(px[i], x, py[i], y) < distance(px[n], x, py[n], y)) { // find the nearest cell center
-
-						n = i;
-					}
-				}
-
-				voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond
-																			// collection
+		for (int it = 0; it < iteration; it++) {
+			// initiate Lists
+			voronoiPointList = new ArrayList<VoronoiPoint>();
+			for (int i = 0; i < centerList.size(); i++) {
+				voronoiPointList.add(new VoronoiPoint());
 			}
-		}
 
-		// end of adding pixel
+			// Categorize each of pixel depending on the Voronoi Area they belongs to
+			for (int x = 0; x < width; x++) { // for each column in the image boundary
+				for (int y = 0; y < height; y++) { // for each row in the image boundary
+					n = 0;
+					for (int i = 0; i < centerList.size(); i++) { // for each of cell point
+						if (distance(centerList.get(i).getX(), x, centerList.get(i).getY(),
+								y) < distance(centerList.get(n).getX(), x, centerList.get(n).getY(), y)) { // find the
+																											// nearest
+																											// cell
+																											// center
+
+							n = i;
+						}
+					}
+
+					voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond
+																				// collection
+				}
+			}
+
+			// make a new center list based on area
+			centerList = makeCenterList(voronoiPointList);
+			System.out.print("iteration:" + it +"\n");
+			
+		}
 
 		// Apply the color of each of pixel from collection to the result image
 		for (int i = 0; i < voronoiPointList.size(); i++) {
 
 			VoronoiPoint tempVoronoi = voronoiPointList.get(i);
 			List<Pixel> pixelCollection = tempVoronoi.getPixelList(); // get the pixel collection of one cell
-			List<Pixel> edgeCollection = tempVoronoi.getEdgeList(); // get the pixel collection of one cell
+			List<Pixel> edgeCollection = tempVoronoi.getEdgeList(); // get the edge collection of one cell
 
 			int rgbValue = tempVoronoi.getColor(); // get the average color value in the area
 
@@ -142,13 +156,10 @@ public class StainedGlass extends Frame {
 		return result;
 	}
 
+	// Quad Tree !!!!!
 	public BufferedImage applyQuadtree(BufferedImage image) throws IOException {
 
 		BufferedImage result = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType());
-		Color[][] colors = makeColorArray(image);
-
-		int threshHold = 20;
-		QuadTree<Color> quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
 
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -156,6 +167,14 @@ public class StainedGlass extends Frame {
 			}
 		}
 		ImageIO.write(result, "png", new File("normal_quad" + threshHold + ".png"));
+
+		Graphics2D g = result.createGraphics();
+		g.setColor(Color.BLACK);
+
+		for (int i = 0; i < (quadTree.centerPointCollection).size(); i++) {
+			Pixel temp = (quadTree.centerPointCollection).get(i);
+			g.fill(new Ellipse2D.Double(temp.getX() - 2.5, temp.getY() - 2.5, 5, 5));
+		}
 		return result;
 
 	}
@@ -178,10 +197,16 @@ public class StainedGlass extends Frame {
 	private double distance(int x1, int x2, int y1, int y2) {
 		double d;
 		d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)); // Euclidian
-		// d = Math.abs(x1 - x2) + Math.abs(y1 - y2); // Manhattan
-		// d = Math.pow(Math.pow(Math.abs(x1 - x2), p) + Math.pow(Math.abs(y1 - y2), p),
-		// (1 / p)); // Minkovski
 		return d;
+	}
+
+	private List<Pixel> makeCenterList(List<VoronoiPoint> li) {
+		List<Pixel> result = new ArrayList<Pixel>();
+		for (int i = 0; i < li.size(); i++) {
+			result.add(li.get(i).getCenter());
+		}
+
+		return result;
 	}
 
 	// display================================== //

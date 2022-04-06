@@ -11,8 +11,13 @@ public class VoronoiPoint {
 	private int blueAverage = 0;
 	private int greenAverage = 0;
 	private int redAverage = 0;
+	
+	private int xCount=0;
+	private int yCount=0;
+	private int xTotal=0;
+	private int yTotal=0;
 
-	private List<Pixel> pixelCollection = new ArrayList<Pixel>();
+	private List<Pixel> pixelCollection = new ArrayList<Pixel>();// pixels of voronoi cell
 
 	private List<Pixel> edgeCollection = new ArrayList<Pixel>();
 
@@ -29,6 +34,7 @@ public class VoronoiPoint {
 		return new Color(redAverage, greenAverage, blueAverage).getRGB();
 	}
 
+	
 	public List<Pixel> getPixelList() {
 		return pixelCollection;
 	}
@@ -111,6 +117,11 @@ public class VoronoiPoint {
 		return edgeCollection;
 	}
 
+	
+	public Pixel getCenter() {
+		return (new Pixel(xTotal / xCount, yTotal / yCount));
+	}
+	
 	// add pixel to the pixel list and add the rgb value to total
 	public void AddPixel(int x, int y, int rgb) {
 		blueTotal += new Color(rgb).getBlue();
@@ -119,6 +130,13 @@ public class VoronoiPoint {
 
 		Pixel p = new Pixel(x, y);
 		pixelCollection.add(p);
+		
+		
+		//Cumulate X Y value for center point
+		xCount++;
+		yCount++;		
+		xTotal += x;
+		yTotal += y;
 
 	}
 

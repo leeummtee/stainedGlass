@@ -7,8 +7,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class StainedGlass extends Frame {
 
@@ -34,6 +38,10 @@ public class StainedGlass extends Frame {
 	public Color[][] colors;
 	public QuadTree<Color> quadTree;
 
+	
+	SliderUI sliderUI;
+	
+	
 	// constructor
 	// Get an image from the specified file in the current directory on the
 	// local hard disk.
@@ -83,6 +91,31 @@ public class StainedGlass extends Frame {
 		}// end WindowAdapter
 		);// end addWindowListener
 	}// end constructor
+	
+	
+	 // load image from user file
+    private void loadImage() {
+	   try {
+	           JFileChooser chooser = new JFileChooser();
+	           FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "png");
+	           chooser.setFileFilter(filter);
+	           int returnVal = chooser.showOpenDialog(null);
+	           if (returnVal == JFileChooser.APPROVE_OPTION) {
+	               srcImg = deepCopy(ImageIO.read(chooser.getSelectedFile()));
+	       }
+	       this.setSize(width, height);
+	   } catch (Exception e) {
+	       e.printStackTrace();
+	   }
+	}
+    
+    // creates deep copies of images 
+    static BufferedImage deepCopy(BufferedImage bi) {
+    	   ColorModel cm = bi.getColorModel();
+    	   boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+    	   WritableRaster raster = bi.copyData(null);
+    	   return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+    	}
 
 	public BufferedImage stainedGlassFilter(BufferedImage src) throws IOException {
 

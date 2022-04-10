@@ -1,8 +1,10 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
@@ -24,37 +26,41 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class StainedGlass extends Frame {
 
 	BufferedImage srcImg;
-
+	BufferedImage saveImage;
 	BufferedImage finalResult;
 
 	int width, height;
 
 	static BufferedImage I;
 	static int px[], py[], color[], cells = 1000;
-	int chooseFilter = 0; // 0 is glass, 1 is quadtree
+//	int chooseFilter = 1; // 0 is glass, 1 is quadtree
+	public int chooseFilter;
+//	int threshHold = 20;
+	int minThreshHold = 10;
 	int threshHold = 20;
+	int maxThreshHold = 50;
+	
 	int iteration = 10;
 
 	public Color[][] colors;
 	public QuadTree<Color> quadTree;
-
 	
 	SliderUI sliderUI;
-	
 	
 	// constructor
 	// Get an image from the specified file in the current directory on the
 	// local hard disk.
 	public StainedGlass() {
 		try {
-			srcImg = ImageIO.read(new File("test3.jpg"));
+//			srcImg = ImageIO.read(new File("test3.jpg"));
+			loadImage();
 
 		} catch (Exception e) {
 			System.out.println("Cannot load the provided image");
 		}
 		this.setTitle("Stained Glass Filter");
 		this.setVisible(true);
-
+		
 		width = srcImg.getWidth();
 		height = srcImg.getHeight();
 
@@ -63,25 +69,10 @@ public class StainedGlass extends Frame {
 		quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
 		// ===================The end ==============
 
-		if (chooseFilter == 0) {
-			try {
-				finalResult = stainedGlassFilter(srcImg);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} // apply the filter to the image
-
-		}
-
-		else if (chooseFilter == 1) {
-			try {
-				finalResult = applyQuadtree(srcImg);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} // apply the filter to the image
-
-		}
+		checkFilter();
+		
+		sliderUI = new SliderUI(this);
+		sliderUI.display();
 
 		// Anonymous inner-class listener to terminate program
 		this.addWindowListener(new WindowAdapter() {// anonymous class definition
@@ -92,9 +83,40 @@ public class StainedGlass extends Frame {
 		);// end addWindowListener
 	}// end constructor
 	
+	public void checkFilter() {
+		if (chooseFilter == 0) {
+			try {
+				finalResult = stainedGlassFilter(srcImg);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} // apply the filter to the image
+		}
+
+		else if (chooseFilter == 1) {
+			try {
+				finalResult = applyQuadtree(srcImg);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} // apply the filter to the image
+		}
+	}
 	
-	 // load image from user file
-    private void loadImage() {
+	 //refresh the frame
+    public void refresh() {
+    	   // reset the img
+    	   try {
+    	       srcImg = deepCopy(saveImage);
+    	   }
+    	   catch (Exception e) {
+    	       System.out.println("cannot load image");
+    	   }
+    	   repaint();
+    	}
+
+	 //load user image
+    public void loadImage() {
 	   try {
 	           JFileChooser chooser = new JFileChooser();
 	           FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "png");
@@ -103,26 +125,42 @@ public class StainedGlass extends Frame {
 	           if (returnVal == JFileChooser.APPROVE_OPTION) {
 	               srcImg = deepCopy(ImageIO.read(chooser.getSelectedFile()));
 	       }
+	           saveImage = deepCopy(ImageIO.read(chooser.getSelectedFile()));
 	       this.setSize(width, height);
 	   } catch (Exception e) {
 	       e.printStackTrace();
 	   }
 	}
     
-    // creates deep copies of images 
+    //save image
+    public boolean exportImage(Component component) {
+        Rectangle rect = component.getBounds();
+
+        try {
+            String format = "png";
+            String fileName = "ExportedImage." + format;
+            BufferedImage captureImage = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+            component.paint(captureImage.getGraphics());
+            ImageIO.write(captureImage, format, new File(fileName));
+            System.out.printf("Image exported");
+            return true;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
+    //making a deep copy of images
     static BufferedImage deepCopy(BufferedImage bi) {
     	   ColorModel cm = bi.getColorModel();
     	   boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
     	   WritableRaster raster = bi.copyData(null);
     	   return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
-    	}
+	}
 
 	public BufferedImage stainedGlassFilter(BufferedImage src) throws IOException {
-
 		BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
-
 		int n = 0;
-
 		List<VoronoiPoint> voronoiPointList = new ArrayList<VoronoiPoint>();
 		List<Pixel> centerList = quadTree.centerPointCollection;
 
@@ -147,16 +185,15 @@ public class StainedGlass extends Frame {
 							n = i;
 						}
 					}
-
-					voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond
-																				// collection
+					voronoiPointList.get(n).AddPixel(x, y, src.getRGB(x, y)); // adding coordinate to the correspond															// collection
 				}
 			}
 
 			// make a new center list based on area
 			centerList = makeCenterList(voronoiPointList);
-			System.out.print("iteration:" + it +"\n");
-			
+//			System.out.print("iteration:" + it +"\n");
+			System.out.print("completion: " + it + "0" + "" + "%" +"\n");
+
 		}
 
 		// Apply the color of each of pixel from collection to the result image
@@ -178,14 +215,12 @@ public class StainedGlass extends Frame {
 				result.setRGB(temp.getX(), temp.getY(), Color.white.getRGB()); // set the pixel data to result image
 			} // end for
 
-		} // end for
+		} //end for
 
-		// end of applying
-
+		//end of applying
 		ImageIO.write(result, "png", new File("glasseffect" + ".png"));
 
 		// Graphics2D g = I.createGraphics();
-
 		return result;
 	}
 
@@ -209,7 +244,6 @@ public class StainedGlass extends Frame {
 			g.fill(new Ellipse2D.Double(temp.getX() - 2.5, temp.getY() - 2.5, 5, 5));
 		}
 		return result;
-
 	}
 
 	// Until functions ======== //
@@ -246,8 +280,8 @@ public class StainedGlass extends Frame {
 
 	public void paint(Graphics g) {
 
-		int w = width / 4;
-		int h = height / 4;
+		int w = width/2;
+		int h = height/2;
 
 		this.setSize(w * 2 + 100, h * 2 + 50);
 

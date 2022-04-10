@@ -19,8 +19,6 @@ public class QuadTree<T> {
 		this.threshold = threshold;
 		this.defaultValue = defaultValue;
 		root = new Node(data, 0, 0, data.length, data[0].length);
-
-	
 	}
 
 	// Gets the pixel data at the given coordinate.

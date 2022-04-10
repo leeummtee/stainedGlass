@@ -106,6 +106,7 @@ public class VoronoiPoint {
 					} // end if
 
 				} // end if
+			
 			} // end for
 
 			// add the pixel of border to edge list

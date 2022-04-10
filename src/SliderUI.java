@@ -120,7 +120,9 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
             stainedGlass.createNewQuadTree();
             stainedGlass.refresh();
             stainedGlass.checkFilter();
-//            stainedGlass.repaint();
+            stainedGlass.refresh();
+
+            //stainedGlass.repaint();
             
 //        } else if (clickedButton == uploadImage) {
 //            System.out.println("Selecting new Image");
@@ -132,7 +134,6 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
                 JOptionPane.showMessageDialog(this, "Image exported to project folder");
             }
         } 
-  
     }
 
     //display the controls

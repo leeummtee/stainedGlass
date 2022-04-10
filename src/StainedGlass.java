@@ -105,15 +105,15 @@ public class StainedGlass extends Frame {
 	
 	 //refresh the frame
     public void refresh() {
-    	   // reset the img
-    	   try {
-    	       srcImg = deepCopy(saveImage);
-    	   }
-    	   catch (Exception e) {
-    	       System.out.println("cannot load image");
-    	   }
-    	   repaint();
-    	}
+		try {
+		       finalResult = deepCopy(saveImage);
+		   }
+		   catch (Exception e) {
+		       System.out.println("cannot load image");
+		   }
+	   checkFilter();
+	   repaint();
+	}
 
 	 //load user image
     public void loadImage() {

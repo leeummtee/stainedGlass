@@ -239,10 +239,12 @@ public class StainedGlass extends Frame {
 		Graphics2D g = result.createGraphics();
 		g.setColor(Color.BLACK);
 
+		/*
 		for (int i = 0; i < (quadTree.centerPointCollection).size(); i++) {
 			Pixel temp = (quadTree.centerPointCollection).get(i);
 			g.fill(new Ellipse2D.Double(temp.getX() - 2.5, temp.getY() - 2.5, 5, 5));
-		}
+		}*/
+		
 		return result;
 	}
 
@@ -284,10 +286,24 @@ public class StainedGlass extends Frame {
 
 	public void paint(Graphics g) {
 
-		int w = width/2;
-		int h = height/2;
+		
+		int w = 500;
+		int h = height * w/width;
+		//System.out.println(height);
+		
+		if(width > height) {
+			w = 500;
+			h = height * w/width;
+			//System.out.println(height);
+		}
+		
+		else if(width <= height) {
+			h = 600;
+			w = width * h/height;
+			//System.out.println(height);
+		}
 
-		this.setSize(w * 2 + 100, h * 2 + 50);
+		this.setSize(w * 2 + 100, h + 100);
 
 		g.setColor(Color.BLACK);
 		Font f1 = new Font("Verdana", Font.PLAIN, 13);

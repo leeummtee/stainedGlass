@@ -116,6 +116,8 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
         if (clickedButton == renderButton) {        	
             System.out.println("Applying Changes");
             stainedGlass.threshHold = detailSlider.getValue();
+            //System.out.println(detailSlider.getValue());
+            stainedGlass.createNewQuadTree();
             stainedGlass.refresh();
             stainedGlass.checkFilter();
 //            stainedGlass.repaint();

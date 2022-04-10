@@ -37,7 +37,7 @@ public class StainedGlass extends Frame {
 	public int chooseFilter;
 //	int threshHold = 20;
 	int minThreshHold = 10;
-	int threshHold = 20;
+	public int threshHold = 20;
 	int maxThreshHold = 50;
 	
 	int iteration = 10;
@@ -274,6 +274,10 @@ public class StainedGlass extends Frame {
 		}
 
 		return result;
+	}
+	
+	public void createNewQuadTree() {
+		quadTree = new QuadTree<Color>(colors, threshHold / 300.0, new Color(0, 0, 0));
 	}
 
 	// display================================== //

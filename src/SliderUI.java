@@ -53,7 +53,7 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
 
         //radio buttons
         distanceLabel.setText("Filter Selection: ");
-        euclideanButton.setText("Euclidean");
+        euclideanButton.setText("Voronoi Filter");
         quadButton.setText("Quad Tree");
         buttonGroup.add(euclideanButton);
         buttonGroup.add(quadButton);
@@ -106,7 +106,7 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
         // change the filter to the one selected by the user
         if (euclideanButton.isSelected()) {
         	stainedGlass.chooseFilter = 0;
-            System.out.println("Euclidean Filter Chosen");
+            System.out.println("Voronoi Filter Chosen");
         } else if (quadButton.isSelected()) {
         	stainedGlass.chooseFilter = 1;
             System.out.println("Quad Tree Filter Chosen");

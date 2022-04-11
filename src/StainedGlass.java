@@ -153,7 +153,7 @@ public class StainedGlass extends Frame {
         }
     }
     
-    //making a deep copy of images
+    //making a deep copy of images so that each render is based on the original source image and not the image that was just editted
     static BufferedImage deepCopy(BufferedImage bi) {
     	   ColorModel cm = bi.getColorModel();
     	   boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
@@ -200,12 +200,9 @@ public class StainedGlass extends Frame {
 				for (int y = 0; y < height; y++) { // for each row in the image boundary
 					n = 0;
 					for (int i = 0; i < centerList.size(); i++) { // for each of cell point
+						// find the nearest cell center
 						if (distance(centerList.get(i).getX(), x, centerList.get(i).getY(),
-								y) < distance(centerList.get(n).getX(), x, centerList.get(n).getY(), y)) { // find the
-																											// nearest
-																											// cell
-																											// center
-
+								y) < distance(centerList.get(n).getX(), x, centerList.get(n).getY(), y)) { 
 							n = i;
 						}
 					}

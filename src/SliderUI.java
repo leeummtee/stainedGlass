@@ -36,7 +36,11 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
     JLabel detailLabel = new JLabel();
     JLabel distanceLabel = new JLabel();
     JLabel fragmentLabel = new JLabel();
+    JLabel iterationLabel = new JLabel();
+    
     JSlider detailSlider; //detail slider
+    JSlider iterationSlider; //iteration slider
+    
     //filter selection
     JRadioButton euclideanButton = new JRadioButton(); 
     JRadioButton quadButton = new JRadioButton();
@@ -59,12 +63,19 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
         buttonGroup.add(quadButton);
         euclideanButton.setSelected(true);
         
-        //slider
+        //detail slider
         detailSlider = new JSlider(stainedGlass.minThreshHold,stainedGlass.maxThreshHold,stainedGlass.threshHold);
-        detailSlider.setPreferredSize(new Dimension(400,40));
+        detailSlider.setPreferredSize(new Dimension(400,50));
         detailSlider.setOrientation(SwingConstants.HORIZONTAL);
         detailSlider.addChangeListener(this);
         detailLabel.setText("Size of Cells: "+ detailSlider.getValue());
+        
+        //iteration slider
+        iterationSlider = new JSlider(stainedGlass.minIteration,stainedGlass.maxIteration,stainedGlass.iteration);
+        iterationSlider.setPreferredSize(new Dimension(400,50));
+        iterationSlider.setOrientation(SwingConstants.HORIZONTAL);
+        iterationSlider.addChangeListener(this);
+        iterationLabel.setText("Iterations: "+ iterationSlider.getValue());
         
         //adding listeners to buttons
         renderButton.addActionListener(this);
@@ -85,6 +96,10 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
                 GridBagConstraints.NONE, marginTop, 0, 0));
         add(detailSlider, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE, noInsets, 0, 0));
+        add(iterationLabel, new GridBagConstraints(0, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
+                GridBagConstraints.NONE, marginTop, 0, 0));
+        add(iterationSlider, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
+                GridBagConstraints.NONE, noInsets, 0, 0));
         add(fragmentLabel, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE, marginTop, 0, 0));
         add(renderButton, new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
@@ -99,6 +114,7 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
     public void stateChanged(ChangeEvent e) {
     	//update detail for UI
         detailLabel.setText("Size of Cells: "+ detailSlider.getValue());
+        iterationLabel.setText("Iterations: "+ iterationSlider.getValue());
     }
 
     //checking if user has performed action
@@ -116,11 +132,11 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
         if (clickedButton == renderButton) {        	
             System.out.println("Applying Changes");
             stainedGlass.threshHold = detailSlider.getValue();
+            stainedGlass.iteration = iterationSlider.getValue();
             //System.out.println(detailSlider.getValue());
             stainedGlass.createNewQuadTree();
             stainedGlass.refresh();
             stainedGlass.checkFilter();
-            stainedGlass.refresh();
 
             //stainedGlass.repaint();
             

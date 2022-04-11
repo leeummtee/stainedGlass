@@ -40,7 +40,9 @@ public class StainedGlass extends Frame {
 	public int threshHold = 20;
 	int maxThreshHold = 50;
 	
-	int iteration = 10;
+	int minIteration = 1;
+	public int iteration = 10;
+	int maxIteration = 15;
 
 	public Color[][] colors;
 	public QuadTree<Color> quadTree;
@@ -191,9 +193,7 @@ public class StainedGlass extends Frame {
 
 			// make a new center list based on area
 			centerList = makeCenterList(voronoiPointList);
-//			System.out.print("iteration:" + it +"\n");
-			System.out.print("completion: " + it + "0" + "" + "%" +"\n");
-
+			System.out.print("iteration:" + it +"\n");
 		}
 
 		// Apply the color of each of pixel from collection to the result image

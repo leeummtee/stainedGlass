@@ -104,8 +104,6 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
                 GridBagConstraints.NONE, marginTop, 0, 0));
         add(renderButton, new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE, marginTop, 0, 0));
-//        add(uploadImage, new GridBagConstraints(0, 11, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-//                GridBagConstraints.NONE, marginTop, 0, 0));
         add(exportImage, new GridBagConstraints(0, 12, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
                 GridBagConstraints.NONE, marginTop, 0, 0));
     }
@@ -128,22 +126,14 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
             System.out.println("Quad Tree Filter Chosen");
         }
 
+        //if button is clicked, apply changes to image
         JButton clickedButton = (JButton) event.getSource();
-        if (clickedButton == renderButton) {        	
-            System.out.println("Applying Changes");
-            stainedGlass.threshHold = detailSlider.getValue();
+        if (clickedButton == renderButton) { 
+            System.out.println("Applying Changes"); 
+            stainedGlass.threshHold = detailSlider.getValue(); 
             stainedGlass.iteration = iterationSlider.getValue();
-            //System.out.println(detailSlider.getValue());
             stainedGlass.createNewQuadTree();
             stainedGlass.refresh();
-            //stainedGlass.checkFilter();
-
-            //stainedGlass.repaint();
-            
-//        } else if (clickedButton == uploadImage) {
-//            System.out.println("Selecting new Image");
-//        	stainedGlass.refresh();
-//            stainedGlass.loadImage();
         	
         } else if (clickedButton == exportImage) {
             if (stainedGlass.exportImage(stainedGlass)) {

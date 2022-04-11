@@ -39,7 +39,7 @@ public class QuadTree<T> {
 			this.width = width;
 			this.height = height;
 
-			if (((width < 30) || (height < 30) || (measure.measureDetail(data, x, y, width, height) < threshold))) {
+			if (((width < 20) || (height < 20) || (measure.measureDetail(data, x, y, width, height) < threshold))) {
 				value = measure.approximate(data, x, y, width, height);
 
 				// add the center point to the list

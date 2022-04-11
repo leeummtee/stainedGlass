@@ -36,7 +36,7 @@ public class StainedGlass extends Frame {
 //	int chooseFilter = 1; // 0 is glass, 1 is quadtree
 	public int chooseFilter;
 //	int threshHold = 20;
-	int minThreshHold = 10;
+	int minThreshHold = 5;
 	public int threshHold = 20;
 	int maxThreshHold = 50;
 	

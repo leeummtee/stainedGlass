@@ -7,6 +7,7 @@ public class ImageMeasure {
 		int greenSum = 0;
 		int blueSum = 0;
 
+		//calculation of the sum of all the rgb value
 		for (int i = x; i < x + width; i++) {
 			for (int j = y; j < y + height; j++) {
 				redSum += data[i][j].getRed();
@@ -14,9 +15,10 @@ public class ImageMeasure {
 				blueSum += data[i][j].getBlue();
 			}
 		}
+		
+		int pixelCount = width * height;//total pixel in the area
 
-		int pixelCount = width * height;
-
+		//return the average color form the area of cell
 		return new Color(redSum / pixelCount, greenSum / pixelCount, blueSum / pixelCount);
 	}
 
@@ -25,6 +27,8 @@ public class ImageMeasure {
 		int greenSum = 0;
 		int blueSum = 0;
 
+		
+		//iterate through all the pixels in the area
 		for (int i = x; i < x + width; i++) {
 			for (int j = y; j < y + height; j++) {
 				redSum += data[i][j].getRed();
@@ -33,8 +37,9 @@ public class ImageMeasure {
 			}
 		}
 
-		double pixelCount = width * height;
+		double pixelCount = width * height; //total pixels in the cell
 
+		//get the average value in the area
 		double redAvg = redSum / pixelCount;
 		double greenAvg = greenSum / pixelCount;
 		double blueAvg = blueSum / pixelCount;
@@ -43,6 +48,7 @@ public class ImageMeasure {
 		greenSum = 0;
 		blueSum = 0;
 
+		//calculate the sum of difference between the pixel and average value
 		for (int i = x; i < x + width; i++) {
 			for (int j = y; j < y + height; j++) {
 				int red = data[i][j].getRed();
@@ -54,6 +60,8 @@ public class ImageMeasure {
 				blueSum += Math.pow(blue - blueAvg , 2);
 			}
 		}
+		
+		//return the value of average difference between the pixel and total average
 		return redSum / (pixelCount * 255 * 255) + greenSum / (pixelCount * 255 * 255)
 				+ blueSum / (pixelCount * 255 * 255);
 	}

@@ -25,6 +25,10 @@ public class QuadTree<T> {
 	public Color get(int i, int j) {
 		return root.get(i, j);
 	}
+	
+	public Color getFrame(int i, int j) {
+		return root.getFrame(i, j);
+	}
 
 	// A QuadTree node.
 	public class Node {
@@ -45,11 +49,10 @@ public class QuadTree<T> {
 				// add the center point to the list
 				Pixel tem = new Pixel(x + width / 2, y + height / 2);
 				centerPointCollection.add(tem);
-	
-			} 
-			else {
-				children = new Object[4];
 
+			} else {
+				children = new Object[4];
+				//create 4 children as the collection of four sub square
 				children[0] = new Node(data, x, y, width / 2, height / 2);
 				children[1] = new Node(data, x + width / 2, y, width - width / 2, height / 2);
 				children[2] = new Node(data, x, y + height / 2, width / 2, height - height / 2);
@@ -57,6 +60,7 @@ public class QuadTree<T> {
 			}
 		}
 
+		//get the color of the pixel and get it's rgb value
 		public Color get(int i, int j) {
 			if (value == null) { // if this is not a leaf
 				if (i < x + width / 2) {
@@ -73,10 +77,33 @@ public class QuadTree<T> {
 					}
 				}
 			} else {
-				if (((i == x) || (j == y)) && (defaultValue != null))
+				if (((i == x) || (j == y)) && (defaultValue != null)) // if the pixel is on the edge
 					return defaultValue;
 				else
 					return value;
+			}
+		}
+		
+		public Color getFrame(int i, int j) {
+			if (value == null) { // if this is not a leaf
+				if (i < x + width / 2) {
+					if (j < y + height / 2) {
+						return ((Node) children[0]).get(i, j);
+					} else {
+						return ((Node) children[2]).get(i, j);
+					}
+				} else {
+					if (j < y + height / 2) {
+						return ((Node) children[1]).get(i, j);
+					} else {
+						return ((Node) children[3]).get(i, j);
+					}
+				}
+			} else {
+				if (((i == x) || (j == y))) // if the pixel is on the edge
+					return new Color(255,255,255);
+				else
+					return new Color(0,0,0);
 			}
 		}
 

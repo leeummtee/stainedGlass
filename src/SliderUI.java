@@ -136,7 +136,7 @@ public class SliderUI extends JPanel implements ChangeListener, ActionListener, 
             //System.out.println(detailSlider.getValue());
             stainedGlass.createNewQuadTree();
             stainedGlass.refresh();
-            stainedGlass.checkFilter();
+            //stainedGlass.checkFilter();
 
             //stainedGlass.repaint();
             

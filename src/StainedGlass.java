@@ -144,6 +144,7 @@ public class StainedGlass extends Frame {
             BufferedImage captureImage = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
             component.paint(captureImage.getGraphics());
             ImageIO.write(captureImage, format, new File(fileName));
+            ImageIO.write(finalResult, "png", new File("filter" + chooseFilter + ".png"));
             System.out.printf("Image exported");
             return true;
         } catch (IOException ex) {
@@ -162,6 +163,27 @@ public class StainedGlass extends Frame {
 
 	public BufferedImage stainedGlassFilter(BufferedImage src) throws IOException {
 		BufferedImage result = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
+		
+		//===========================================================================step 1
+		BufferedImage tmp = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType()); //intermediate result
+
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				tmp.setRGB(i, j, quadTree.getFrame(i, j).getRGB());
+			}
+		}
+		
+		//draw center point
+		Graphics2D g = tmp.createGraphics();
+		g.setColor(Color.BLACK);
+		for (int i = 0; i < (quadTree.centerPointCollection).size(); i++) {
+			Pixel temp = (quadTree.centerPointCollection).get(i);
+			g.fill(new Ellipse2D.Double(temp.getX() - 2.5, temp.getY() - 2.5, 5, 5));
+		}
+		
+		ImageIO.write(tmp, "png", new File("step 1" + ".png"));//export step 1 image result
+		//end of step 1=============================================================================
+		
 		int n = 0;
 		List<VoronoiPoint> voronoiPointList = new ArrayList<VoronoiPoint>();
 		List<Pixel> centerList = quadTree.centerPointCollection;
@@ -193,6 +215,42 @@ public class StainedGlass extends Frame {
 
 			// make a new center list based on area
 			centerList = makeCenterList(voronoiPointList);
+			
+			
+			//step 2 to n section================================================================
+		
+			tmp = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType()); //intermediate result
+			// Apply the color of each of pixel from collection to the result image
+			for (int i = 0; i < voronoiPointList.size(); i++) {
+
+				VoronoiPoint tempVoronoi = voronoiPointList.get(i);
+				List<Pixel> pixelCollection = tempVoronoi.getPixelList(); // get the pixel collection of one cell
+				List<Pixel> edgeCollection = tempVoronoi.getEdgeList(); // get the edge collection of one cell
+
+				int rgbValue = tempVoronoi.getColor(); // get the average color value in the area
+
+				for (int j = 0; j < pixelCollection.size(); j++) {
+					Pixel temp = pixelCollection.get(j); // get the pixel data
+					tmp.setRGB(temp.getX(), temp.getY(), rgbValue); // set the pixel data to result image
+				} // end for
+
+				for (int j = 0; j < edgeCollection.size(); j++) {
+					Pixel temp = edgeCollection.get(j); // get the pixel data
+					tmp.setRGB(temp.getX(), temp.getY(), Color.white.getRGB()); // set the pixel data to result image
+				} // end for
+
+			} //end for
+			
+			g = tmp.createGraphics();
+			g.setColor(Color.BLACK);
+			for (int i = 0; i < centerList.size(); i++) {
+				Pixel temp = centerList.get(i);
+				g.fill(new Ellipse2D.Double(temp.getX() - 2.5, temp.getY() - 2.5, 5, 5));
+			}
+			
+			ImageIO.write(tmp, "png", new File("step " + (it+2) + ".png"));//export step 1 image result
+			//===========================================================================================end to steps
+			
 			System.out.print("iteration:" + it +"\n");
 		}
 
@@ -218,7 +276,7 @@ public class StainedGlass extends Frame {
 		} //end for
 
 		//end of applying
-		ImageIO.write(result, "png", new File("glasseffect" + ".png"));
+		//ImageIO.write(result, "png", new File("glasseffect" + ".png"));
 
 		// Graphics2D g = I.createGraphics();
 		return result;
@@ -228,22 +286,13 @@ public class StainedGlass extends Frame {
 	public BufferedImage applyQuadtree(BufferedImage image) throws IOException {
 
 		BufferedImage result = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(), srcImg.getType());
-
+		
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				result.setRGB(i, j, quadTree.get(i, j).getRGB());
 			}
 		}
-		ImageIO.write(result, "png", new File("normal_quad" + threshHold + ".png"));
-
-		Graphics2D g = result.createGraphics();
-		g.setColor(Color.BLACK);
-
-		/*
-		for (int i = 0; i < (quadTree.centerPointCollection).size(); i++) {
-			Pixel temp = (quadTree.centerPointCollection).get(i);
-			g.fill(new Ellipse2D.Double(temp.getX() - 2.5, temp.getY() - 2.5, 5, 5));
-		}*/
+		
 		
 		return result;
 	}
